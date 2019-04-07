@@ -1,0 +1,55 @@
+import os
+import sys
+import time
+import random
+import telepot
+import datetime
+import numpy as np
+import pandas as pd
+from sklearn import preprocessing, neighbors, model_selection
+
+arr = []
+def handle(msg):
+    global arr
+    fh = open("testfile.txt", "w")
+    chat_id = msg['chat']['id']
+    command = msg['text']
+    print('Got command: %s' %command)
+    if command == 'a':
+        arr = np.array(arr)
+        arr = arr.reshape(1,-1)
+        print(arr)
+        pd.set_option("display.max_rows",10000)
+        pd.set_option("display.max_columns",10000)
+        df = pd.read_csv('framingham')
+        df.dropna(axis = 0, inplace = True)
+        df.drop(['prevalentHyp','totChol','sysBP','diaBP'], 1, inplace = True)
+        print(df.head())
+        X = np.array(df.drop(['TenYearCHD'],1))
+        y = np.array(df['TenYearCHD'])
+        X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size = 0.25)
+        clf = neighbors.KNeighborsClassifier(n_jobs = -1)
+        clf.fit(X_train, y_train)
+
+        acc = clf.score(X_test, y_test)
+        print(acc)
+        predict = clf.predict(arr)
+        print(predict)
+        sbot.sendMessage(chat_id, str(predict))
+    command = int(command)
+    print(command)
+    fh.writelines(str(command)+"\n")
+    fh.close()
+    fh = open("testfile.txt", "r")
+    for i in fh.readlines():
+        print(int(i))
+        arr.append(int(i))
+    fh.close()
+bot = telepot.Bot('***INSERT YOUR BOT TOKEN***')
+bot.message_loop(handle)
+
+print ('I am listening ....')
+
+
+while 1:
+    time.sleep(10)
