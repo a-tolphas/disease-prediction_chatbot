@@ -1,10 +1,12 @@
+# This code will guide you through the process of working of a chatbot. 
+
 import os
 import sys
 import time
 import random
 import telepot
 import datetime
-import numpy as np
+import numpy as np #to install these files follow the steps in README
 import pandas as pd
 from sklearn import preprocessing, neighbors, model_selection
 
@@ -21,7 +23,7 @@ def handle(msg):
         print(arr)
         pd.set_option("display.max_rows",10000)
         pd.set_option("display.max_columns",10000)
-        df = pd.read_csv('framingham')
+        df = pd.read_csv('framingham')  #LINK TO THIS FILE IS ALSO PROVIDED IN README. 
         df.dropna(axis = 0, inplace = True)
         df.drop(['prevalentHyp','totChol','sysBP','diaBP'], 1, inplace = True)
         print(df.head())
@@ -35,7 +37,7 @@ def handle(msg):
         print(acc)
         predict = clf.predict(arr)
         print(predict)
-        sbot.sendMessage(chat_id, str(predict))
+        bot.sendMessage(chat_id, str(predict))
     command = int(command)
     print(command)
     fh.writelines(str(command)+"\n")
